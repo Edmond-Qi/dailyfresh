@@ -1,2 +1,0 @@
-# dailyfresh
-learning
