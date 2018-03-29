@@ -115,14 +115,34 @@ STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'static')
 ]
 
-AUTH_USER_MODEL='tt_user.User'
+AUTH_USER_MODEL = 'tt_user.User'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.163.com'
 EMAIL_PORT = 25
 #发送邮件的邮箱
-EMAIL_HOST_USER = 'itcast88@163.com'
+EMAIL_HOST_USER = 'bfqi_10@163.com'
 #在邮箱中设置的客户端授权密码
-EMAIL_HOST_PASSWORD = 'python2018'
+EMAIL_HOST_PASSWORD = 'edmond2018'
 #收件人看到的发件人
-EMAIL_FROM = '天天生鲜<itcast88@163.com>'
+EMAIL_FROM = '天天生鲜<bfqi_10@163.com>'
+
+# 缓存
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/6",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
+# Session
+# http://django-redis-chs.readthedocs.io/zh_CN/latest/#session-backend
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+LOGIN_URL = '/user/login'
