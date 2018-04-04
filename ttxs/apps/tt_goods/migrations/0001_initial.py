@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
                 ('add_date', models.DateTimeField(auto_now_add=True)),
                 ('update_date', models.DateTimeField(auto_now=True)),
                 ('isDelete', models.BooleanField(default=False)),
-                ('image', models.ImageField(upload_to='goods', verbose_name='图片')),
+                ('image', models.ImageField(upload_to='tt_goods', verbose_name='图片')),
             ],
             options={
                 'verbose_name_plural': '商品图片',
@@ -72,10 +72,10 @@ class Migration(migrations.Migration):
                 ('price', models.DecimalField(max_digits=10, verbose_name='价格', decimal_places=2)),
                 ('stock', models.IntegerField(verbose_name='库存', default=0)),
                 ('sales', models.IntegerField(verbose_name='销量', default=0)),
-                ('default_image', models.ImageField(upload_to='goods', verbose_name='图片')),
+                ('default_image', models.ImageField(upload_to='tt_goods', verbose_name='图片')),
                 ('status', models.BooleanField(default=True, verbose_name='是否上线')),
                 ('category', models.ForeignKey(to='tt_goods.GoodsCategory', verbose_name='类别')),
-                ('goods', models.ForeignKey(to='tt_goods.Goods', verbose_name='商品')),
+                ('tt_goods', models.ForeignKey(to='tt_goods.Goods', verbose_name='商品')),
             ],
             options={
                 'verbose_name_plural': '商品SKU',

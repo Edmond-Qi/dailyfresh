@@ -27,7 +27,7 @@ SECRET_KEY = 'a3=e^7bxri92o9fmg-pqm5x%6$#fc62=&@0!komf$-4pe_p&+e'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,7 +43,8 @@ INSTALLED_APPS = (
     'tt_goods',
     'tt_cart',
     'tt_order',
-    'tinymce'
+    'tinymce',
+    'haystack'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -144,5 +145,35 @@ CACHES = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 
 LOGIN_URL = '/user/login'
+
+# 配置Django自定义的存储系统
+DEFAULT_FILE_STORAGE = 'utils.storage.FdfsStorage'
+# 指定FastDFS的配置文件
+FDFS_CLIENT = os.path.join(BASE_DIR, 'utils/fdfs_client.conf')
+FDFS_SERVER = 'http://127.0.0.1:8888/'
+
+
+TINYMCE_DEFAULT_CONFIG = {
+  'theme': 'advanced', # 丰富样式
+  'width': 600,
+  'height': 400,
+}
+# 生成静态页面的路径
+GENERATE_HTML = os.path.join(BASE_DIR, 'static/html')
+
+# 配置搜索引擎后端
+HAYSTACK_CONNECTIONS = {
+  'default': {
+      # 使用whoosh引擎：提示，如果不需要使用jieba框架实现分词，就使用whoosh_backend
+      'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',
+      # 索引文件路径
+      'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+  }
+}
+# 当添加、修改、删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 2

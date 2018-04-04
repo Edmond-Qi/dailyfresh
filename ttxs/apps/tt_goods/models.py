@@ -42,7 +42,7 @@ class GoodsSKU(BaseModel):
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="价格")
     stock = models.IntegerField(default=0, verbose_name="库存")
     sales = models.IntegerField(default=0, verbose_name="销量")
-    default_image = models.ImageField(upload_to="goods", verbose_name="图片")
+    default_image = models.ImageField(upload_to="tt_goods", verbose_name="图片")
     status = models.BooleanField(default=True, verbose_name="是否上线")
 
     class Meta:
@@ -57,7 +57,7 @@ class GoodsSKU(BaseModel):
 class GoodsImage(BaseModel):
     """商品图片"""
     sku = models.ForeignKey(GoodsSKU, verbose_name="商品SKU")
-    image = models.ImageField(upload_to="goods", verbose_name="图片")
+    image = models.ImageField(upload_to="tt_goods", verbose_name="图片")
 
     class Meta:
         db_table = "df_goods_image"

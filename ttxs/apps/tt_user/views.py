@@ -11,6 +11,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from utils.views import LoginRequiredViewMixin
 from django_redis import get_redis_connection
+from tt_goods.models import GoodsSKU
+import json
 
 
 # Create your views here.
@@ -155,8 +157,29 @@ class LoginView(View):
         if remember is None:
             response.delete_cookie('uname')
         else:
-            response.set_cookie('uname', uname, expires=60 * 60 * 24 * 7)
+            response.set_cookie('uname', uname, expires=60 * 60 * 24)
 
+
+        # 1.读取cookie中的购物车信息，转成字典
+        cart_str = request.COOKIES.get('cart')
+        if cart_str:
+            key = 'cart%d' % request.user.id
+            # 将cookies中的购物车信息转存入redis中
+            redis_client = get_redis_connection()
+            cart_dict = json.loads(cart_str)
+            for k,v in cart_dict.items():
+                if redis_client.hexists(key,k):
+                    #　如果有则数量相加
+                    count1=int(redis_client.hget(key,k))
+                    count2 = v
+                    count0 = count1 + count2
+                    if count0 > 5:
+                        count0 = 5
+                    redis_client.hset(key, k, count0)
+                else:
+                    # 如果无则添加
+                    redis_client.hset(key,k,v)
+            response.delete_cookie('cart')
         # 如果登录成功则转到用户中心页面
         return response
 
@@ -176,9 +199,19 @@ def info(request):
     else:
         address = None
 
+    #获取redis服务器的连接
+    redis_client = get_redis_connection()
+    #用键区分用户的ｉｄ
+    good_list = redis_client.lrange('history%d'%request.user.id,0,-1)
+    #根据商品编号查询商品对象
+    goods_list = []
+    for gid in good_list:
+        goods_list.append(GoodsSKU.objects.get(pk=gid))
+
     context = {
         'title':'个人信息',
         'address': address,
+        'goods_list':goods_list
     }
     return render(request, 'user_center_info.html', context)
 
