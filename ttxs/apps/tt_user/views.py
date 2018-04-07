@@ -13,6 +13,9 @@ from utils.views import LoginRequiredViewMixin
 from django_redis import get_redis_connection
 from tt_goods.models import GoodsSKU
 import json
+from tt_order.models import OrderInfo
+from django.core.paginator import Paginator
+from utils.page_list import get_page_list
 
 
 # Create your views here.
@@ -219,7 +222,25 @@ def info(request):
 # 显示用户的订单信息
 @login_required
 def order(request):
-    context = {}
+    # 查询当前用户的所有订单数据、
+    order_list = OrderInfo.objects.filter(user=request.user).order_by('-add_date')
+    # 分页
+    paginator = Paginator(order_list,2)
+    total_page = paginator.num_pages
+    pindex = int(request.GET.get('pindex',1))
+    if pindex <= 1:
+        pindex = 1
+    if pindex >= total_page:
+        pindex = total_page
+
+    page = paginator.page(pindex)
+
+    page_list = get_page_list(total_page,pindex)
+    context = {
+        'title':'我的订单',
+        'page':page,
+        'page_list':page_list
+    }
     return render(request, 'user_center_order.html', context)
 
 
@@ -278,3 +299,29 @@ def area(request,index):
     for item in addr:
         addr_list.append({'id':item.id, 'title':item.title})
     return JsonResponse({'list':addr_list})
+
+class CommentView(LoginRequiredViewMixin, View):
+    def get(self, request):
+        order_id = request.GET.get('order_id')
+
+        order = OrderInfo.objects.get(pk=order_id)
+        context = {
+            'title': '评论商品',
+            'order':order,
+        }
+        return render(request, 'user_center_comment.html', context)
+
+    def post(self, request):
+        #虽然当前请求方式为post，但是order_id是在地址中的参数，所以使用GET来接收
+        order_id = request.GET.get('order_id')
+
+        order = OrderInfo.objects.get(pk=order_id)
+        order.status = 5
+        order.save()
+
+        dict = request.POST
+
+        for detail in order.ordergoods_set.all():
+            detail.comment = dict.get(str(detail.id))
+            detail.save()
+        return redirect('/user/order')

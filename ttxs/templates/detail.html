@@ -87,12 +87,20 @@
 
 		<div class="r_wrap fr clearfix">
 			<ul class="detail_tab clearfix">
-				<li class="active">商品介绍</li>
-				<li>评论</li>
+				<li class="active" value="1">商品介绍</li>
+				<li value="2">评论</li>
 			</ul>
 
-			<div class="tab_content">
+			<div class="tab_content" id="content">
 				{{ sku.goods.desc | safe }}
+			</div>
+            <div class="tab_content" id="comment" style="display: none;">
+				<ul>
+                    {% for detail in comment_list %}
+                    <li>{{ detail.comment }}</li>
+                    {% endfor %}
+
+                </ul>
 			</div>
 
 		</div>
@@ -160,7 +168,18 @@
             var num = parseInt($('.num_show').val());
             num--;
             $('.num_show').val(num).blur();//模拟触发事件
-        })
+        });
+	$('.detail_tab>li').click(function () {
+        $(this).addClass('active');
+        $(this).siblings().removeClass('active');
+        if($(this).val()=='1'){
+            $('#content').show();
+            $('#comment').hide();
+        }else if($(this).val()=='2'){
+            $('#content').hide();
+            $('#comment').show();
+        }
+    });
 	</script>
 {% endblock footer1 %}
 

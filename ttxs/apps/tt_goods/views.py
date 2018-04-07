@@ -86,13 +86,14 @@ def detail(request,sku_id):
         if redis_client.llen(keys)>5:
             redis_client.rpop(keys)
 
-
+    comment_list=sku.ordergoods_set.exclude(comment='')
     context = {
         'title':'商品详情',
         'sku': sku,
         'category_list': category_list,
         'new_list': new_list,
-        'other_list': other_list
+        'other_list': other_list,
+        'comment_list': comment_list,
     }
     context['total_count'] = get_cart_total(request)
     return render(request,'detail.html',context)

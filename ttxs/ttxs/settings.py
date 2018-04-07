@@ -177,3 +177,11 @@ HAYSTACK_CONNECTIONS = {
 # 当添加、修改、删除数据时，自动生成索引
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 2
+
+# 支付宝的商家账号
+APP_ID = '2016091100485656'
+
+ALIPAY_PUBLIC_KEY = os.path.join(BASE_DIR, 'utils/alipay_public_key.pem')
+APP_PRIVATE_KEY = os.path.join(BASE_DIR,'utils/app_private_key.pem')
+# 沙箱网关环境
+ALIPAY_GATEWAY = 'https://openapi.alipaydev.com/gateway.do?'
